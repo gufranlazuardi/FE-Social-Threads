@@ -1,4 +1,3 @@
-// api/postApi.ts
 import axios from '../lib/axiosWithConfig';
 import { useQuery } from '@tanstack/react-query';
 
