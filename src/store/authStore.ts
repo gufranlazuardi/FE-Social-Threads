@@ -34,7 +34,9 @@ export const useAuthStore = create<AuthState>()(
                 set({ isLoading: true, error: null });
                 try {
                     const response = await axios.post('/api/auth/login', { email, password });
-                    const { token, user } = response.data.data;
+                    const user = response.data.data;
+                    const token = response.data.token;
+
                     set({
                         token,
                         user,
@@ -42,6 +44,7 @@ export const useAuthStore = create<AuthState>()(
                         isLoading: false
                     });
                     localStorage.setItem('token', token);
+                    console.log("login token :", token)
                 } catch (error: any) {
                     set({
                         error: error.response?.data?.message || 'Login failed',
@@ -96,6 +99,7 @@ export const useAuthStore = create<AuthState>()(
                         isAuthenticated: true,
                         isLoading: false
                     });
+
                 } catch (error) {
                     set({
                         user: null,
@@ -104,6 +108,7 @@ export const useAuthStore = create<AuthState>()(
                         isLoading: false
                     });
                     localStorage.removeItem('token');
+
                 }
             }
         }),

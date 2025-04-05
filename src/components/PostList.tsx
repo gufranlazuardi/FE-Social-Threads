@@ -1,7 +1,8 @@
 // components/posts/PostList.tsx
 import { useGetAllPosts } from '@/api/postApi';
 import Image from 'next/image';
-import formatDistanceToNow from 'date-fns';
+import dayjs from '@/lib/dayjs';
+
 
 export function PostList() {
     const { data: posts, isLoading, error } = useGetAllPosts();
@@ -45,8 +46,7 @@ export function PostList() {
                             <p className="text-sm text-gray-500">@{post.author.username}</p>
                         </div>
                         <span className="text-xs text-gray-400 ml-auto">
-                            {/* {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })} */}
-                            (new Date(post.createdAt))
+                            {dayjs(post.createdAt).fromNow(true)} ago
                         </span>
                     </div>
 
