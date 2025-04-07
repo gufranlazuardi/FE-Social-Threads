@@ -1,4 +1,3 @@
-// components/posts/PostList.tsx
 import { useGetAllPosts } from '@/api/postApi';
 import Image from 'next/image';
 import dayjs from '@/lib/dayjs';

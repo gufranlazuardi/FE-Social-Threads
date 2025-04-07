@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { PostList } from '@/components/PostList';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function HomePage() {
   const { isAuthenticated, isLoading } = useAuthStore();
@@ -25,7 +27,14 @@ export default function HomePage() {
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-3xl">
-      <h1 className="text-2xl font-bold mb-6">Latest Posts</h1>
+      <div className='flex justify-between items-center mb-6'>
+        <h1 className="text-2xl font-bold">Latest Posts</h1>
+        <Link href={'/profile'}>
+          <Button className='text-sm bg-pink-500'>
+            Profile
+          </Button>
+        </Link>
+      </div>
       <PostList />
     </main>
   );
