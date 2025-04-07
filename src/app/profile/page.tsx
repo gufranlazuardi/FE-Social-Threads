@@ -51,10 +51,12 @@ const Profile = () => {
                             <div className="flex flex-col space-y-1.5">
                                 <Label htmlFor="name">Username</Label>
                                 <Input id="name" placeholder={me?.data.name} defaultValue={me?.data.username} disabled={!isEdit} />
-                            </div> <div className="flex flex-col space-y-1.5">
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
                                 <Label htmlFor="name">Email</Label>
-                                <Input id="name" placeholder={me?.data.email} defaultValue={me?.data.email} disabled={!isEdit} />
-                            </div> <div className="flex flex-col space-y-1.5">
+                                <Input id="name" placeholder={me?.data.email} defaultValue={me?.data.email} disabled />
+                            </div>
+                            <div className="flex flex-col space-y-1.5">
                                 <Label htmlFor="name">Bio</Label>
                                 <Input id="name" placeholder={me?.data.bio} defaultValue={me?.data.bio} disabled={!isEdit} />
                             </div>
