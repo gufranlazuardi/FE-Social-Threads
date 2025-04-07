@@ -32,6 +32,36 @@ export interface PostsResponse {
     data: Post[];
 }
 
+export interface PostDetail {
+    id: string
+    content: string
+    imageUrl: string
+    createdAt: string
+    updatedAt: string
+    authorId: string
+    author: {
+        id: string
+        username: string
+        name: string
+    },
+    comments: string[],
+    likes: string[],
+    _count: {
+        comments: string[],
+        likes: string[],
+    }
+}
+
+export interface PostDetailResponse {
+    status: string;
+    code: number;
+    message: string;
+    meta: {
+        timeStamp: string;
+    };
+    data: Post;
+}
+
 export const fetchPosts = async (): Promise<Post[]> => {
     const response = await axios.get<PostsResponse>('/api/post');
     return response.data.data;
@@ -43,3 +73,16 @@ export const useGetAllPosts = () => {
         queryFn: fetchPosts,
     });
 };
+
+export const fetchDetailPost = async (id: string): Promise<Post> => {
+    const response = await axios.get<PostDetailResponse>(`/api/post/${id}`)
+    return response.data.data
+}
+
+export const useGetDetailPost = (id: string) => {
+    return useQuery({
+        queryKey: ['detailPost', 'id'],
+        queryFn: () => fetchDetailPost(id),
+        enabled: !!id, // Only run the query if we have an ID
+    })
+}
