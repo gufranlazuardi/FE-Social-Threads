@@ -1,6 +1,3 @@
-import axios from '../lib/axiosWithConfig';
-import { useQuery } from '@tanstack/react-query';
-
 export interface Author {
     id: string;
     username: string;
@@ -62,27 +59,7 @@ export interface PostDetailResponse {
     data: Post;
 }
 
-export const fetchPosts = async (): Promise<Post[]> => {
-    const response = await axios.get<PostsResponse>('/api/post');
-    return response.data.data;
-};
-
-export const useGetAllPosts = () => {
-    return useQuery({
-        queryKey: ['posts'],
-        queryFn: fetchPosts,
-    });
-};
-
-export const fetchDetailPost = async (id: string): Promise<Post> => {
-    const response = await axios.get<PostDetailResponse>(`/api/post/${id}`)
-    return response.data.data
-}
-
-export const useGetDetailPost = (id: string) => {
-    return useQuery({
-        queryKey: ['detailPost', 'id'],
-        queryFn: () => fetchDetailPost(id),
-        enabled: !!id, // Only run the query if we have an ID
-    })
-}
+// export interface CreatePostBody {
+//     content: FormData
+//     imageFile: FormData
+// }

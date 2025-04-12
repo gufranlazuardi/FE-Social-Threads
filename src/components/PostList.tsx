@@ -1,4 +1,4 @@
-import { useGetAllPosts } from '@/api/postApi';
+import { useGetAllPosts } from '@/api/post/api';
 import Image from 'next/image';
 import dayjs from '@/lib/dayjs';
 import Link from 'next/link';
@@ -32,7 +32,7 @@ export function PostList() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="flex flex-col space-y-6">
             {posts.map((post) => (
                 <Link href={`/post/${post.id}`} key={post.id}>
                     <div key={post.id} className="bg-white rounded-lg shadow p-4">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useGetDetailPost } from '@/api/postApi'
+import { useGetDetailPost } from '@/api/post/api'
 import dayjs from '@/lib/dayjs'
 import Image from 'next/image'
 import Link from 'next/link'

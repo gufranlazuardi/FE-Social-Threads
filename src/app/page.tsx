@@ -4,8 +4,10 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { PostList } from '@/components/PostList';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import NewPostForm from '@/components/NewPostForm';
 
 export default function HomePage() {
   const { isAuthenticated, isLoading } = useAuthStore();
@@ -30,11 +32,15 @@ export default function HomePage() {
       <div className='flex justify-between items-center mb-6'>
         <h1 className="text-2xl font-bold">Latest Posts</h1>
         <Link href={'/profile'}>
-          <Button className='text-sm bg-pink-500'>
-            Profile
-          </Button>
+          <div className='text-sm cursor-pointer'>
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </div>
         </Link>
       </div>
+      <NewPostForm />
       <PostList />
     </main>
   );
