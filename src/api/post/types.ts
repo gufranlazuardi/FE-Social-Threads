@@ -16,6 +16,10 @@ export interface Post {
         comments: number;
         likes: number;
     }
+    meta: {
+        timeStamp: string;
+        totalPages: number
+    };
 }
 
 export interface PostsResponse {

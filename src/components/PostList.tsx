@@ -1,11 +1,41 @@
-import { useGetAllPosts } from '@/api/post/api';
+// import { useGetPostsInfinite } from '@/api/post/api';
 import Image from 'next/image';
 import dayjs from '@/lib/dayjs';
 import Link from 'next/link';
-
+import { useEffect, useRef, useCallback } from 'react';
+import { useGetPostsInfinite } from '@/api/post';
 
 export function PostList() {
-    const { data: posts, isLoading, error } = useGetAllPosts();
+    const limit = 5;
+
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        error
+    } = useGetPostsInfinite(limit);
+
+    // Reference for intersection observer
+    const observerRef = useRef<IntersectionObserver | null>(null);
+    const loadMoreRef = useCallback((node: HTMLDivElement | null) => {
+        if (isFetchingNextPage) return;
+
+        if (observerRef.current) {
+            observerRef.current.disconnect();
+        }
+
+        observerRef.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasNextPage) {
+                fetchNextPage();
+            }
+        }, { threshold: 1.0 });
+
+        if (node) {
+            observerRef.current.observe(node);
+        }
+    }, [isFetchingNextPage, fetchNextPage, hasNextPage]);
 
     if (isLoading) {
         return (
@@ -23,7 +53,9 @@ export function PostList() {
         );
     }
 
-    if (!posts?.length) {
+    const posts = data?.pages.flatMap(page => page.posts) || [];
+
+    if (!posts.length) {
         return (
             <div className="text-center p-8">
                 <p className="text-gray-500">No posts found</p>
@@ -35,7 +67,7 @@ export function PostList() {
         <div className="flex flex-col space-y-6">
             {posts.map((post) => (
                 <Link href={`/post/${post.id}`} key={post.id}>
-                    <div key={post.id} className="bg-white rounded-lg shadow p-4">
+                    <div className="bg-white rounded-lg shadow p-4">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                                 <span className="text-lg font-medium text-gray-600">
@@ -82,6 +114,19 @@ export function PostList() {
                     </div>
                 </Link>
             ))}
+
+            {/* Load more trigger element */}
+            <div
+                ref={loadMoreRef}
+                className="flex justify-center py-4"
+            >
+                {isFetchingNextPage && (
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-600"></div>
+                )}
+                {!hasNextPage && posts.length > 0 && (
+                    <p className="text-gray-500 text-sm">No more posts to load</p>
+                )}
+            </div>
         </div>
     );
 }

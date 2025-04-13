@@ -1,16 +1,46 @@
 import axios from '../../lib/axiosWithConfig';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Post, PostDetailResponse, PostsResponse } from './types';
 
-export const fetchPosts = async (): Promise<Post[]> => {
-    const response = await axios.get<PostsResponse>('/api/post');
+export const fetchPosts = async (page = 1, limit = 5): Promise<Post[]> => {
+    const response = await axios.get<PostsResponse>('/api/post', {
+        params: { page, limit }
+    });
     return response.data.data;
 };
 
-export const useGetAllPosts = () => {
+export const useGetAllPosts = (page = 1, limit = 5) => {
     return useQuery({
-        queryKey: ['posts'],
-        queryFn: fetchPosts,
+        queryKey: ['posts', page, limit],
+        queryFn: () => fetchPosts(page, limit),
+    });
+};
+
+export const fetchPostsPage = async ({ pageParam = 1, limit = 5 }): Promise<{
+    posts: Post[],
+    nextPage: number | null,
+    totalPages: number
+}> => {
+    const response = await axios.get<PostsResponse>('/api/post', {
+        params: { page: pageParam, limit }
+    });
+
+    const totalPages = response.data.meta.totalPages || 0
+    const nextPage = pageParam < totalPages ? pageParam + 1 : null;
+
+    return {
+        posts: response.data.data,
+        nextPage,
+        totalPages
+    };
+};
+
+export const useGetPostsInfinite = (limit = 5) => {
+    return useInfiniteQuery({
+        queryKey: ['postsInfinite', limit],
+        queryFn: ({ pageParam }) => fetchPostsPage({ pageParam, limit }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextPage,
     });
 };
 
@@ -46,3 +76,4 @@ export const useCreatePost = () => {
         }
     })
 }
+
