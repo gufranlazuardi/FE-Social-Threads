@@ -1,8 +1,7 @@
-// import { useGetPostsInfinite } from '@/api/post/api';
 import Image from 'next/image';
 import dayjs from '@/lib/dayjs';
 import Link from 'next/link';
-import { useEffect, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { useGetPostsInfinite } from '@/api/post';
 
 export function PostList() {
@@ -17,7 +16,6 @@ export function PostList() {
         error
     } = useGetPostsInfinite(limit);
 
-    // Reference for intersection observer
     const observerRef = useRef<IntersectionObserver | null>(null);
     const loadMoreRef = useCallback((node: HTMLDivElement | null) => {
         if (isFetchingNextPage) return;
@@ -91,8 +89,8 @@ export function PostList() {
                                     src={post.imageUrl}
                                     alt="Post image"
                                     fill
-                                    style={{ objectFit: 'cover' }}
-                                    className="rounded-md"
+                                    // style={{ objectFit: 'cover' }}
+                                    className="rounded-md object-contain"
                                 />
                             </div>
                         )}
@@ -127,6 +125,8 @@ export function PostList() {
                     <p className="text-gray-500 text-sm">No more posts to load</p>
                 )}
             </div>
+
+
         </div>
     );
 }
