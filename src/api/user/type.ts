@@ -15,3 +15,29 @@ export interface GetMeResponse {
         updatedAt: string
     }
 }
+
+
+
+export type UpdateProfileBody = {
+    username: string
+    bio: string
+    name: string
+}
+
+export type UpdateProfileResponse = {
+    status: string
+    code: number
+    message: string
+    meta: {
+        timestamp: string
+    },
+    data: {
+        id: string
+        name: string
+        username: string
+        email: string
+        bio: string
+        createdAt: Date
+        updatedAt: Date
+    }
+}
