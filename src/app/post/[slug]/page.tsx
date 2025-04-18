@@ -1,5 +1,6 @@
 'use client'
 
+import { useGetCommentsById } from '@/api/comment'
 import { useGetDetailPost } from '@/api/post/api'
 import dayjs from '@/lib/dayjs'
 import Image from 'next/image'
@@ -14,9 +15,11 @@ const Post = () => {
     const params = useParams()
     const postId = params.slug as string
 
-    const { data: post, isLoading, error } = useGetDetailPost(postId)
+    const { data: post, isLoading: postLoading, error: postError } = useGetDetailPost(postId)
+    const { data: comments, isLoading: commentLoading, error: commentError } = useGetCommentsById(postId)
 
-    if (isLoading) {
+
+    if (postLoading || commentLoading) {
         return (
             <div className="flex justify-center items-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-600"></div>
@@ -24,7 +27,7 @@ const Post = () => {
         )
     }
 
-    if (error) {
+    if (postError || commentError) {
         return (
             <div className="bg-red-50 p-4 rounded-md">
                 <p className="text-red-500">Failed to load post</p>
@@ -61,7 +64,7 @@ const Post = () => {
                         <p className="text-sm text-gray-500">@{post.author.username}</p>
                     </div>
                     <span className="text-sm text-gray-400 ml-auto">
-                        {dayjs(post.createdAt).format('MMM D, YYYY · h:mm A')}
+                        {dayjs(post.createdAt).fromNow()}
                     </span>
                 </div>
 
@@ -81,7 +84,7 @@ const Post = () => {
                             <Image
                                 src={post.imageUrl}
                                 alt={post.content}
-                                className='object-cover rounded-md'
+                                className='object-contain rounded-md'
                                 fill
                             />
                         </>
@@ -103,6 +106,36 @@ const Post = () => {
                         {post._count.likes} likes
                     </span>
                 </div>
+
+                {comments && comments.length > 0 ? (
+                    <div className="space-y-4 mt-[1rem]">
+                        {comments.map((comment) => (
+                            <div key={comment.id} className="bg-gray-50 p-4 rounded-lg">
+                                <div className="flex items-center gap-3 mb-2">
+                                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                        <span className="text-sm font-medium text-gray-600">
+                                            {comment.author.name.charAt(0)}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-medium">{comment.author.name}</h4>
+                                        <p className="text-xs text-gray-500">@{comment.author.username}</p>
+                                    </div>
+                                    <span className="text-xs text-gray-400 ml-auto">
+                                        {dayjs(comment.createdAt).fromNow()}
+                                    </span>
+                                </div>
+
+                                <p className="text-gray-700">{comment.content}</p>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-6 text-gray-500">
+                        No comments yet. Be the first to comment!
+                    </div>
+                )}
+
             </div>
         </main>
     )
