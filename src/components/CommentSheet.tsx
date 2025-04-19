@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useGetCommentsById } from "@/api/comment"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import dayjs from "@/lib/dayjs"
@@ -15,6 +15,39 @@ interface CommentSheetProps {
     postId: string
     commentCount: number
 }
+
+const sampleReplyData = [
+    {
+        "id": 1,
+        "message": "bagus banget bang",
+        "user": "john",
+        "date": "1 hour ago"
+    },
+    {
+        "id": 2,
+        "message": "kerennnnnnnnnnnnnnnnnnnnnnnn",
+        "user": "shinta",
+        "date": "1 hour ago"
+    },
+    {
+        "id": 3,
+        "message": "semangat",
+        "user": "melanie",
+        "date": "1 hour ago"
+    },
+    {
+        "id": 4,
+        "message": "jawa hama",
+        "user": "alexa",
+        "date": "1 hour ago"
+    },
+    {
+        "id": 5,
+        "message": "mabar bang",
+        "user": "michael",
+        "date": "1 hour ago"
+    },
+]
 
 export function CommentSheet({ postId, commentCount }: CommentSheetProps) {
     const [open, setOpen] = useState(false)
@@ -65,19 +98,40 @@ export function CommentSheet({ postId, commentCount }: CommentSheetProps) {
                         ) : comments && comments.length > 0 ? (
                             <div className="space-y-4">
                                 {comments.map((comment) => (
-                                    <div key={comment.id} className="flex gap-3">
-                                        <Avatar className="w-8 h-8">
-                                            <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex flex-col space-y-0.5">
-                                            <div className="flex items-baseline gap-2">
-                                                <span className="font-medium text-sm">{comment.author.username}</span>
-                                                <span className="text-xs text-gray-500">{dayjs(comment.createdAt).fromNow()}</span>
+                                    <>
+                                        <div key={comment.id} className="flex gap-3">
+                                            <Avatar className="w-8 h-8">
+                                                <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col space-y-0.5">
+                                                <div className="flex items-baseline gap-2">
+                                                    <span className="font-medium text-sm">{comment.author.username}</span>
+                                                    <span className="text-xs text-gray-500">{dayjs(comment.createdAt).fromNow()}</span>
+                                                </div>
+                                                <p className="text-sm text-wrap">{comment.content}</p>
+                                                <p className="text-xs font-semibold text-pink-500 mt-1">Reply</p>
                                             </div>
-                                            <p className="text-sm text-wrap">{comment.content}</p>
-                                            <p className="text-xs font-semibold text-pink-500 mt-1">Reply</p>
+
                                         </div>
-                                    </div>
+                                        <div className="flex flex-col gap-4 pl-[3rem]">
+                                            {sampleReplyData.map((data) => (
+                                                <div className="flex items-center space-x-4">
+                                                    <Avatar>
+                                                        <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                                        <AvatarFallback>CN</AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="flex flex-col">
+                                                        <div className="flex items-center space-x-2">
+                                                            <p className="text-sm font-semibold">{data.user}</p>
+                                                            <p className="text-xs font-thin">{data.date}</p>
+                                                        </div>
+                                                        <p className="text-xs" key={data.id}>{data.message}</p>
+                                                    </div>
+
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
                                 ))}
                             </div>
                         ) : (
