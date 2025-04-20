@@ -20,4 +20,5 @@ export type CommentData = {
         username: string
         name: string
     }
+    parentId?: string
 }

@@ -1,70 +1,62 @@
 "use client"
 
+import { useState } from "react"
 import type React from "react"
-
+import { MessageCircle, SendHorizontal, X } from "lucide-react"
 import { useGetCommentsById } from "@/api/comment"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import dayjs from "@/lib/dayjs"
-import { MessageCircle, SendHorizontal, X } from "lucide-react"
-import { useState } from "react"
 import { Input } from "./ui/input"
+import dayjs from "@/lib/dayjs"
 
 interface CommentSheetProps {
     postId: string
     commentCount: number
 }
 
-const sampleReplyData = [
-    {
-        "id": 1,
-        "message": "bagus banget bang",
-        "user": "john",
-        "date": "1 hour ago"
-    },
-    {
-        "id": 2,
-        "message": "kerennnnnnnnnnnnnnnnnnnnnnnn",
-        "user": "shinta",
-        "date": "1 hour ago"
-    },
-    {
-        "id": 3,
-        "message": "semangat",
-        "user": "melanie",
-        "date": "1 hour ago"
-    },
-    {
-        "id": 4,
-        "message": "jawa hama",
-        "user": "alexa",
-        "date": "1 hour ago"
-    },
-    {
-        "id": 5,
-        "message": "mabar bang",
-        "user": "michael",
-        "date": "1 hour ago"
-    },
-]
-
 export function CommentSheet({ postId, commentCount }: CommentSheetProps) {
     const [open, setOpen] = useState(false)
-    const { data: comments, isLoading } = useGetCommentsById(postId)
     const [commentText, setCommentText] = useState("")
+    const { data: comments, isLoading } = useGetCommentsById(postId)
 
     const handleCommentClick = (e: React.MouseEvent) => {
-        e.preventDefault() // Prevent navigation to post detail
-        e.stopPropagation() // Prevent event bubbling
+        e.preventDefault()
+        e.stopPropagation()
         setOpen(true)
     }
 
     const handleSubmitComment = (e: React.FormEvent) => {
         e.preventDefault()
-        // Add your comment submission logic here
         console.log("Submitting comment:", commentText)
         setCommentText("")
+    }
+
+    const topLevelComments = comments?.filter((reply) => !reply.parentId) || []
+    const replyComments = comments?.filter((reply) => reply.parentId) || []
+
+    const renderReplies = (parentId: string) => {
+        const replies = replyComments.filter((r) => r.parentId === parentId)
+
+        return (
+            <div className="flex flex-col gap-4 pl-[3rem] mt-2">
+                {replies.map((reply) => (
+                    <div className="flex items-center space-x-4" key={reply.id}>
+                        <Avatar className="w-8 h-8">
+                            <AvatarImage src="https://github.com/shadcn.png" />
+                            <AvatarFallback>{reply.author.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                            <div className="flex items-center space-x-2">
+                                <p className="text-sm font-semibold">{reply.author.username}</p>
+                                <p className="text-xs text-gray-500">{dayjs(reply.createdAt).fromNow()}</p>
+                            </div>
+                            <p className="text-sm">{reply.content}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
     }
 
     return (
@@ -76,7 +68,6 @@ export function CommentSheet({ postId, commentCount }: CommentSheetProps) {
 
             <Sheet open={open} onOpenChange={setOpen}>
                 <SheetContent side="bottom" className="flex flex-col h-[80vh] rounded-t-xl p-0">
-                    {/* Header - Fixed at top */}
                     <SheetHeader className="border-b p-4 sticky top-0 bg-white z-10">
                         <div className="flex items-center justify-between">
                             <SheetTitle>Comments</SheetTitle>
@@ -89,17 +80,16 @@ export function CommentSheet({ postId, commentCount }: CommentSheetProps) {
                         </SheetDescription>
                     </SheetHeader>
 
-                    {/* Content - Scrollable area */}
                     <div className="flex-1 overflow-y-auto p-4">
                         {isLoading ? (
                             <div className="flex justify-center items-center h-24">
-                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
                             </div>
-                        ) : comments && comments.length > 0 ? (
+                        ) : topLevelComments.length > 0 ? (
                             <div className="space-y-4">
-                                {comments.map((comment) => (
-                                    <>
-                                        <div key={comment.id} className="flex gap-3">
+                                {topLevelComments.map((comment) => (
+                                    <div key={comment.id}>
+                                        <div className="flex gap-3">
                                             <Avatar className="w-8 h-8">
                                                 <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
                                             </Avatar>
@@ -111,27 +101,9 @@ export function CommentSheet({ postId, commentCount }: CommentSheetProps) {
                                                 <p className="text-sm text-wrap">{comment.content}</p>
                                                 <p className="text-xs font-semibold text-pink-500 mt-1">Reply</p>
                                             </div>
-
                                         </div>
-                                        <div className="flex flex-col gap-4 pl-[3rem]">
-                                            {sampleReplyData.map((data) => (
-                                                <div className="flex items-center space-x-4">
-                                                    <Avatar>
-                                                        <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                                        <AvatarFallback>CN</AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="flex flex-col">
-                                                        <div className="flex items-center space-x-2">
-                                                            <p className="text-sm font-semibold">{data.user}</p>
-                                                            <p className="text-xs font-thin">{data.date}</p>
-                                                        </div>
-                                                        <p className="text-xs" key={data.id}>{data.message}</p>
-                                                    </div>
-
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </>
+                                        {renderReplies(comment.id)}
+                                    </div>
                                 ))}
                             </div>
                         ) : (

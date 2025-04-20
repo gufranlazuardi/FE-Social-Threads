@@ -1,5 +1,5 @@
-import { getCommentsById, useGetCommentsById } from "./api";
-import { CommentResponse, CommentData } from "./types";
+import { getCommentsById, useGetCommentsById, getRepliesCommentsById, useGetRepliesCommentsById } from "./api";
+import { CommentResponse, CommentData, ReplyCommentData } from "./types";
 
-export { getCommentsById, useGetCommentsById }
-export type { CommentResponse, CommentData }
+export { getCommentsById, useGetCommentsById, getRepliesCommentsById, useGetRepliesCommentsById }
+export type { CommentResponse, CommentData, ReplyCommentData }
