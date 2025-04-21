@@ -190,13 +190,13 @@ const NewPostForm = () => {
                     </div>
                 )}
 
-                {/* <Input
+                <Input
                     type="file"
                     ref={fileInputRef}
                     accept="image/*"
                     onChange={handleFileInputChange}
                     className="rounded-sm mt-2 w-fit"
-                /> */}
+                />
 
                 <div className='flex justify-end'>
                     <Button
