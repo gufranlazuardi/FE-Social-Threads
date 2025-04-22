@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { PostList } from '@/components/PostList';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import NewPostForm from '@/components/NewPostForm';
+import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
   const { isAuthenticated, isLoading } = useAuthStore();
@@ -42,6 +42,9 @@ export default function HomePage() {
       </div>
       <NewPostForm />
       <PostList />
+      <div className='fixed bottom-5 left-1/2 -translate-x-1/2 z-50'>
+        <Navbar />
+      </div>
     </main>
   );
 }
